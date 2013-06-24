@@ -1,4 +1,4 @@
-sat-vocab-definition-scraper
+Vocab Definitions Scraper
 ============================
 
-A simple program to scrape definitions from the web for words loaded from a wordlist.
+A simple program to scrape definitions from the web for vocab words loaded from a wordlist.
