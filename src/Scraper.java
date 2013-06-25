@@ -25,8 +25,8 @@ import com.google.gson.JsonParser;
 
 
 public class Scraper {
-	private final static String API_CALL_PREFIX = "http://glosbe.com/gapi/translate?from=eng&dest=eng&format=json&phrase=";
-	private final static String API_CALL_SUFFIX = "&pretty=true";
+	private final static String API_CALL_PREFIX = "http://www.google.com/dictionary/json?callback=dict_api.callbacks.id100&q=";
+	private final static String API_CALL_SUFFIX = "&sl=en&tl=en&restrict=pr%2Cde&client=te";
 	
 	private HttpClient client;
 	private List<String> wordList;
@@ -64,31 +64,38 @@ public class Scraper {
 		client = new DefaultHttpClient();
 		
 		JsonParser parser = new JsonParser();
-		JsonArray defs = null;
-		int numDefsWanted = 2;
+		String def = null;
 		
 		//int j = 0;
 		for(String word : wordList) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
 			String json = getWordDataJson(word);
 			int idx = 0;
 			boolean success = true;
 			do {
-				
 				try {
-					defs = parser.parse(json)
-							.getAsJsonObject().get("tuc")
+					def = parser.parse(json)
+							.getAsJsonObject().get("primaries")
+							.getAsJsonArray().get(0)
+							.getAsJsonObject().get("entries")
 							.getAsJsonArray().get(idx++)
-							.getAsJsonObject().get("meanings")
-							.getAsJsonArray();
+							.getAsJsonObject().get("terms")
+							.getAsJsonArray().get(0)
+							.getAsJsonObject().get("text")
+							.getAsString();
 					success = true;
-				} catch(NullPointerException e) {
+				} catch(Exception e) {
 					success = false;
 				}
 			} while(!success);
 			
-			Fl.og(defs.toString());
+			Fl.og(word + " : " + def);
 			
-			int count = 0;
+			/*int count = 0;
 			for(JsonElement result : defs) {
 				String defText = result.getAsJsonObject().get("text").getAsString();
 				String currDefs = worddefpairs.get(word);
@@ -100,7 +107,7 @@ public class Scraper {
 				
 				count++;
 				if(count == numDefsWanted) break;
-			}
+			}*/
 			
 			//j++;
 			//if(j == 30) break;
@@ -139,7 +146,7 @@ public class Scraper {
 
 		try {
 			br = new BufferedReader(new InputStreamReader(entity.getContent()));
-
+			
 			String currentLine = "";
 
 			if ((currentLine = br.readLine()) != null) {
@@ -157,7 +164,9 @@ public class Scraper {
 				e.printStackTrace();
 			}
 		}
-
+		int endIndex = returnString.lastIndexOf(',') - 4;
+		returnString = returnString.substring(25, endIndex);
+		System.out.println(returnString);
 		return returnString;
 	}
 	
