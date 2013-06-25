@@ -42,7 +42,6 @@ public class Scraper {
 	private void start() {
 		populateWordList();
 		mapWordsToDefinitions();
-		//outputWordDefinitionPairs();
 	}
 
 	private void populateWordList() {
@@ -66,8 +65,6 @@ public class Scraper {
 		
 		JsonParser parser = new JsonParser();
 		String def = null;
-		int count = 0;
-		//int j = 0;
 		File output = new File(outputFile);
 		PrintWriter writer = null;
 		try {
@@ -75,6 +72,7 @@ public class Scraper {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 		for(String word : wordList) {
 			try {
 				Thread.sleep(5000);
@@ -119,28 +117,7 @@ public class Scraper {
 			String line = "\"" + word + "\", \"" + def + "\"\n";
 			writer.write(line);
 			writer.flush();
-			/*
-			for(JsonElement result : defs) {
-				String defText = result.getAsJsonObject().get("text").getAsString();
-				String currDefs = worddefpairs.get(word);
-				if(currDefs != null) {
-					worddefpairs.put(word, currDefs + "\n\t " + (count+1) + ". " + defText);
-				} else {
-					worddefpairs.put(word, (count+1) + ". " + defText);
-				}
-				
-				count++;
-				if(count == numDefsWanted) break;
-			}*/
-			
-			//j++;
-			//if(j == 30) break;
 		}
-		
-		/*for(String word : worddefpairs.keySet()) {
-			String def = worddefpairs.get(word);
-			Fl.og(String.format("%2s : %2s", word, def));
-		}*/
 		
 		writer.close();
 	}
@@ -158,7 +135,6 @@ public class Scraper {
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println("IOException from HTTP error");
 			e.printStackTrace();
 		}
 		
@@ -192,18 +168,6 @@ public class Scraper {
 		}
 		int endIndex = returnString.lastIndexOf(',') - 4;
 		returnString = returnString.substring(25, endIndex);
-		//System.out.println(returnString);
 		return returnString;
 	}
-	
-	/*private void outputWordDefinitionPairs() {
-		
-		
-		for(String word : worddefpairs.keySet()) {
-			String def = worddefpairs.get(word);
-			
-			Fl.og(line);
-			writer.write(line);
-		}
-	}*/
 }
