@@ -22,6 +22,7 @@ import com.agopinath.lthelogutil.Fl;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
 
 public class Scraper {
@@ -41,7 +42,7 @@ public class Scraper {
 	private void start() {
 		populateWordList();
 		mapWordsToDefinitions();
-		outputWordDefinitionPairs();
+		//outputWordDefinitionPairs();
 	}
 
 	private void populateWordList() {
@@ -65,24 +66,42 @@ public class Scraper {
 		
 		JsonParser parser = new JsonParser();
 		String def = null;
-		
+		int count = 0;
 		//int j = 0;
+		File output = new File(outputFile);
+		PrintWriter writer = null;
+		try {
+			writer = new PrintWriter(new FileWriter(output, true));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		for(String word : wordList) {
 			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
+				Thread.sleep(5000);
+			} catch(Exception e) {
+				e.printStackTrace();
 			}
 			String json = getWordDataJson(word);
-			int idx = 0;
+			int idx = 1;
 			boolean success = true;
 			do {
 				try {
-					def = parser.parse(json)
+					JsonArray temp = null;
+					try {
+						temp = parser.parse(json)
 							.getAsJsonObject().get("primaries")
 							.getAsJsonArray().get(0)
 							.getAsJsonObject().get("entries")
-							.getAsJsonArray().get(idx++)
+							.getAsJsonArray();
+					} catch(Exception e) {
+						e.printStackTrace();
+						temp = parser.parse(json)
+								.getAsJsonObject().get("webDefinitions")
+								.getAsJsonArray().get(0)
+								.getAsJsonObject().get("entries")
+								.getAsJsonArray();
+					}
+					def = temp.get(idx--)
 							.getAsJsonObject().get("terms")
 							.getAsJsonArray().get(0)
 							.getAsJsonObject().get("text")
@@ -95,7 +114,12 @@ public class Scraper {
 			
 			Fl.og(word + " : " + def);
 			
-			/*int count = 0;
+			worddefpairs.put(word, def);
+			
+			String line = "\"" + word + "\", \"" + def + "\"\n";
+			writer.write(line);
+			writer.flush();
+			/*
 			for(JsonElement result : defs) {
 				String defText = result.getAsJsonObject().get("text").getAsString();
 				String currDefs = worddefpairs.get(word);
@@ -117,6 +141,8 @@ public class Scraper {
 			String def = worddefpairs.get(word);
 			Fl.og(String.format("%2s : %2s", word, def));
 		}*/
+		
+		writer.close();
 	}
 	
 	private String getWordDataJson(String word) {
@@ -166,24 +192,18 @@ public class Scraper {
 		}
 		int endIndex = returnString.lastIndexOf(',') - 4;
 		returnString = returnString.substring(25, endIndex);
-		System.out.println(returnString);
+		//System.out.println(returnString);
 		return returnString;
 	}
 	
-	private void outputWordDefinitionPairs() {
-		File output = new File(outputFile);
-		PrintWriter writer = null;
-		try {
-			writer = new PrintWriter(new FileWriter(output));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	/*private void outputWordDefinitionPairs() {
+		
 		
 		for(String word : worddefpairs.keySet()) {
 			String def = worddefpairs.get(word);
-			String line = word + ", " + def + "\n";
+			
 			Fl.og(line);
 			writer.write(line);
 		}
-	}
+	}*/
 }
