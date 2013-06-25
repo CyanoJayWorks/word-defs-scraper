@@ -2431,7 +2431,7 @@
 "myopic", "nearsighted; lacking foresight; N. myopia"
 "myriad", "very large number; ADJ. CF. tethousand"
 "nadir", "lowest point; point othe celestial sphere diametrically opposite the zenith"
-"naivet\'e(naivety)", "quality of being unsophisticated; simplicity; artlessness; gullibility; ADJ. naive(na\"ive): ingenuous; lacking worldliness; simple; credulous"
+"naivete", "quality of being unsophisticated; simplicity; artlessness; gullibility; ADJ. naive(na\ive): ingenuous; lacking worldliness; simple; credulous"
 "narcissist", "conceited person; N. narcissism; CF. narcissus"
 "narrative", "related to telling a story; N: narrated account; story; V. narrate: tell (a story); CF. narration"
 "nascent", "incipient; coming into being or existence; Ex. nascent ability imusic"
